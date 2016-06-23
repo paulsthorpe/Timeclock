@@ -90,11 +90,6 @@
             <i class="fa fa-clock-o"></i> <span>Hours This Period</span>
           </a>
         </li>
-        <li>
-          <a href="/admin/applications">
-            <i class="fa fa-file-text"></i> <span>Applications</span>
-          </a>
-        </li>
       </ul>
     </section>
     <!-- /.sidebar -->
