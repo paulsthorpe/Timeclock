@@ -15,38 +15,51 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-
-
-
-Route::get('/admin', 'EmployeesController@index');
-
-Route::get('/admin/employee/add', 'EmployeesController@add');
-
-Route::post('/admin/employee/create', 'EmployeesController@create');
-
-Route::get('/admin/employee/edit/{employee}', 'EmployeesController@edit');
-
-Route::patch('/admin/employee/{employee}', 'EmployeesController@update');
-
-Route::get('/admin/employee/delete/{employee}', 'EmployeesController@check_delete');
-
-Route::delete('/admin/employee/{employee}', 'EmployeesController@delete');
-
-
-
-
-
 Route::post('/log_time', 'TimeController@log_time');
 
-Route::get('/admin/period_hours', 'TimeController@period_hours');
+Route::auth();
 
-Route::post('/admin/period_hours/add', 'TimeController@add_hours');
+Route::get('/home', 'HomeController@index');
 
-Route::get('/admin/period_hours/{employee}', 'TimeController@employee_time');
 
-Route::get('/admin/period_hours/{employee}/edit', 'TimeController@edit_hours');
+Route::group(['middleware' => 'auth'], function(){
 
-Route::get('/admin/period_hours/{employee}/add', 'TimeController@add_hours');
+  /*
+  |--------------------------------------------------------------------------
+  | Admin Employee Routes
+  |--------------------------------------------------------------------------
+  */
 
-Route::delete('/admin/period_hours/delete/{id}', 'TimeController@delete_hours');
+  Route::get('/admin', 'EmployeesController@index');
+
+  Route::get('/admin/employee/add', 'EmployeesController@add');
+
+  Route::post('/admin/employee/create', 'EmployeesController@create');
+
+  Route::get('/admin/employee/edit/{employee}', 'EmployeesController@edit');
+
+  Route::patch('/admin/employee/{employee}', 'EmployeesController@update');
+
+  Route::get('/admin/employee/delete/{employee}', 'EmployeesController@check_delete');
+
+  Route::delete('/admin/employee/{employee}', 'EmployeesController@delete');
+
+  /*
+  |--------------------------------------------------------------------------
+  | Admin Timeclock Routes
+  |--------------------------------------------------------------------------
+  */
+
+  Route::get('/admin/period_hours', 'TimeController@period_hours');
+
+  Route::post('/admin/period_hours/add', 'TimeController@add_hours');
+
+  Route::get('/admin/period_hours/{employee}', 'TimeController@employee_time');
+
+  Route::get('/admin/period_hours/{employee}/edit', 'TimeController@edit_hours');
+
+  Route::get('/admin/period_hours/{employee}/add', 'TimeController@add_hours');
+
+  Route::delete('/admin/period_hours/delete/{id}', 'TimeController@delete_hours');
+
+});

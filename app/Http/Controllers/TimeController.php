@@ -9,6 +9,7 @@ use App\Employee;
 use App\TimeRecord;
 use App\Services\Timeclock;
 use Carbon\Carbon;
+use Session;
 
 
 class TimeController extends Controller
@@ -102,9 +103,18 @@ class TimeController extends Controller
 
     $employee = Employee::find($request->employee_id);
 
-    Timeclock::clockIn($employee);
+    $return = Timeclock::clockIn($employee);
 
-    return redirect('/user_path');
+    if($return === 0){
+      Session::flash('failed', 'Clock in/out was unsuccessful, please try again');
+    } elseif($return === 1){
+      Session::flash('success', $employee->first_name.', your clock in was successful');
+    } else {
+      Session::flash('success', $employee->first_name.', your clock out was successful');
+    }
+
+
+    return redirect('/home');
 
     //flash employee success/fail
 

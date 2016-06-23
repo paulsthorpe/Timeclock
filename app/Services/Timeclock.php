@@ -28,7 +28,10 @@ class Timeclock {
    */
 
 
-    public static function clockIn($employee) {
+    public static function clockIn($employee){
+      if(!$employee){
+        return 0;
+      }
       //check employee clock in status
       if($employee->clocked_in == 0){
 
@@ -42,6 +45,8 @@ class Timeclock {
         $employee->clocked_in = 1;
         $employee->update();
 
+        return 1;
+
       } else if ($employee->clocked_in == 1) {
 
         //if employee is clocked in, pull most recent timerecord and assign a clock out value, then update
@@ -54,6 +59,7 @@ class Timeclock {
         //update employee clocked_in flag
         $employee->clocked_in = 0;
         $employee->update();
+        return 2;
       }
     }
 
