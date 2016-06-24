@@ -8,7 +8,7 @@
                 <div class="panel-heading">Welcome</div>
 
                 <div class="panel-body">
-                    Your Application's Landing Page.
+                    Login to access functionality. username: test@123.com password:test123
                 </div>
             </div>
         </div>
