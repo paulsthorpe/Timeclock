@@ -17,7 +17,7 @@ use App\TimeRecord;
 |
 */
 
-class Timeclock {
+class TimeclockService {
 
 
 

@@ -15,6 +15,10 @@ use Session;
 class TimeController extends Controller
 {
 
+  public function __construct(TimeclockService $timeclock)
+  {
+      $this->timeService = $timeclock;
+  }
 
 
 
@@ -64,7 +68,7 @@ class TimeController extends Controller
 
   public function add_hours(Request $request){
 
-    Timeclock::addRecord($request);
+    $this->timeService->addRecord($request);
 
     return back();
 
@@ -103,7 +107,7 @@ class TimeController extends Controller
 
     $employee = Employee::find($request->employee_id);
 
-    $return = Timeclock::clockIn($employee);
+    $return = $this->timeService->clockIn($employee);
 
     if($return === 0){
       Session::flash('failed', 'Clock in/out was unsuccessful, please try again');
