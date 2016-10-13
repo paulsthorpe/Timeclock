@@ -3,138 +3,111 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Session;
 use App\Http\Requests;
+//Models
 use App\Employee;
 use App\TimeRecord;
+//Sevices
 use App\Services\Timeclock;
-use Carbon\Carbon;
-use Session;
 
 
 class TimeController extends Controller
 {
 
-  public function __construct(TimeclockService $timeclock)
-  {
-      $this->timeService = $timeclock;
-  }
 
-
-
-  /**
-   *
-   *  Send all Employees to period_hours view
-   *  This view displays all empoyees and their hours for current period
-   *
-   */
-
-
-  public function period_hours(){
-
-    $employees = Employee::all();
-
-    return view('employee.period_hours', compact('employees'));
-
-  }
-
-
-
-
-  /**
-   *
-   *  Send employee, an thier time records to the view
-   *  This view shows detailed time records for the selected employee
-   *
-   */
-
-
-  public function employee_time(Employee $employee){
-
-    $time_records = $employee->time;
-
-    return view('employee.time_by_employee', compact('employee', 'time_records'));
-
-  }
-
-
-
-  /**
-   * Timeclock Routes
-   *
-   *
-   */
-
-
-  public function add_hours(Request $request){
-
-    $this->timeService->addRecord($request);
-
-    return back();
-
-  }
-
-
-
-
-  /**
-   * Timeclock Routes
-   *
-   *
-   */
-
-
-  public function delete_hours(TimeRecord $id){
-
-    $id->delete();
-
-    return back();
-
-  }
-
-
-
-
-  /**
-   *  Get employee_id by post, query that employee
-   *  and then call the clockIn method from TimeClock class to handle
-   *  clocking in/out process, then redirect back to user_path view
-   *
-   */
-
-
-  public function log_time(Request $request){
-
-    $employee = Employee::find($request->employee_id);
-
-    $return = $this->timeService->clockIn($employee);
-
-    if($return === 0){
-      Session::flash('failed', 'Clock in/out was unsuccessful, please try again');
-    } elseif($return === 1){
-      Session::flash('success', $employee->first_name.', your clock in was successful');
-    } else {
-      Session::flash('success', $employee->first_name.', your clock out was successful');
+    /**
+     * Inject TimeclockService
+     * @param TimeclockService $timeclock
+     */
+    public function __construct(TimeclockService $timeclock)
+    {
+        $this->timeService = $timeclock;
     }
 
 
-    return redirect('/home');
+    /**
+     * Clock employee in/out and flash success/fail message
+     * @param Request $request
+     * @return mixed
+     */
+    public function clockIn(Request $request)
+    {
 
-    //flash employee success/fail
+        $employee = Employee::find($request->employee_id);
+        $return = $this->timeService->clockIn($employee);
 
-  }
+        if ($return === 0) {
+            Session::flash('failed', 'Clock in/out was unsuccessful, please try again');
+        } elseif ($return === 1) {
+            Session::flash('success', $employee->first_name . ', your clock in was successful');
+        } else {
+            Session::flash('success', $employee->first_name . ', your clock out was successful');
+        }
+
+        return redirect('/home');
+    }
 
 
+    /**
+     *  Send all Employees to period_hours view
+     *  This view displays all empoyees and their hours for current period
+     * @return mixed
+     */
+    public function index()
+    {
 
-  /**
-   * Timeclock Routes
-   *
-   *
-   */
+        $employees = Employee::all();
+
+        return view('employee.period_hours', compact('employees'));
+
+    }
 
 
-  public function editTime() {
+    /**
+     * Create time record from form, not the clockin page
+     * @param Request $request
+     * @return mixed
+     */
+    public function create(Request $request)
+    {
 
-  }
+        $this->timeService->addRecord($request);
+
+        return back();
+
+    }
+
+
+    /**
+     * delete time record
+     * @param TimeRecord $id
+     * @return mixed
+     */
+    public function delete(TimeRecord $id)
+    {
+
+        $id->delete();
+
+        return back();
+
+    }
+
+
+    /**
+     *  Send employee, an their time records to the view
+     *  This view shows detailed time records for the selected employee
+     * @param Employee $employee
+     * @return mixed
+     */
+    public function employee_time(Employee $employee)
+    {
+
+        $time_records = $employee->time;
+
+        return view('employee.time_by_employee', compact('employee', 'time_records'));
+
+    }
+
 
 }

@@ -12,167 +12,89 @@ class EmployeesController extends Controller
 {
 
 
-  /**
-   *  query all employees and pass to view,
-   *  this view shows all employees
-   *
-   */
+    /**
+     * query all employees and pass to view,
+     * @return mixed
+     */
+    public function index()
+    {
 
+        $employees = Employee::all();
 
-    public function index(){
-
-      $employees = Employee::all();
-
-      return view('employee.view_employees', compact('employees'));
+        return view('employee.view_employees', compact('employees'));
 
     }
 
 
-
-    /**
-     * Timeclock Routes
-     *
-     *
-     */
-
-
-    public function add(){
-
-      return view('employee.add_employee');
+    public function add()
+    {
+        return view('employee.add_employee');
     }
 
 
-
     /**
-     *
-     *  get post request containing employee info,
-     *  create new employee model and assign request info,
-     *  persist new employee to the database
-     *
+     * create new employee, persist to db
+     * @param Request $request
+     * @return mixed
      */
+    public function create(Request $request)
+    {
+        //make new employee model
+        $employee = new Employee;
+        //assign data
+        $employee->id = $request->employee_id;
 
+        $employee->first_name = $request->first_name;
 
-    public function create(Request $request){
-      //make new employee model
-      $employee = new Employee;
-      //assign data
-      $employee->id = $request->employee_id;
+        $employee->last_name = $request->last_name;
 
-      $employee->first_name = $request->first_name;
+        $employee->phone_no = $request->phone_no;
 
-      $employee->last_name = $request->last_name;
+        $employee->clocked_in = 0;
+        //persist model to database
+        $employee->save();
 
-      $employee->phone_no = $request->phone_no;
-
-      $employee->clocked_in = 0;
-      //persist model to database
-      $employee->save();
-
-      return redirect('/admin');
+        return redirect('/admin');
     }
 
 
-
     /**
-     *  get employee model via get request and then pass to view,
-     *  this view populates a form with current info for editing
-     *
+     * populate form to edit employee info
+     * @param Employee $employee
+     * @return mixed
      */
+    public function edit(Employee $employee)
+    {
 
-
-    public function edit(Employee $employee){
-
-      return view('employee.edit_employee', compact('employee'));
+        return view('employee.edit_employee', compact('employee'));
 
     }
 
 
-
     /**
-     *  get employee model and post data and update employee model
-     *  with request data. redirect back to employee index view
-     *
+     * update employee model
+     * @param Request $request
+     * @param Employee $employee
+     * @return mixed
      */
+    public function update(Request $request, Employee $employee)
+    {
 
+        $employee->update($request->all());
 
-    public function update(Request $request, Employee $employee){
-
-      $employee->update($request->all());
-
-      return redirect('/admin');
+        return redirect('/admin');
     }
 
-
-
     /**
-     * Timeclock Routes
-     *
-     *
+     * delete employee model
+     * @param Employee $employee
+     * @return mixed
      */
+    public function delete(Employee $employee)
+    {
+        $employee->delete();
 
-
-    public function check_delete(Employee $employee){
-      return $employee;
-      // return view('admin.employee.check_delete', compact('employee'));
-    }
-
-
-
-    /**
-     * Timeclock Routes
-     *
-     *
-     */
-
-
-    public function delete(Employee $employee){
-      $employee->delete();
-
-      return redirect('/admin');
-    }
-
-
-
-    /**
-     * Timeclock Routes
-     *
-     *
-     */
-
-
-    public function time_index(){
-
-      return view('employee.hours_overview');
-      //view not made yet
-    }
-
-
-
-    /**
-     * Timeclock Routes
-     *
-     *
-     */
-
-
-    public function time_by_index(){
-
-      return view('employee.employee_hours');
-      //view not made yet
-    }
-
-
-
-    /**
-     * Timeclock Routes
-     *
-     *
-     */
-
-
-    public function edit_hours(){
-
-      return view('employee.edit_hours');
+        return redirect('/admin');
     }
 
 }
