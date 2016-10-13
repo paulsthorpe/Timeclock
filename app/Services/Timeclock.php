@@ -27,7 +27,7 @@ class TimeclockService
      * @param $employee
      * @return int
      */
-    public static function clockIn($employee)
+    public function clockIn($employee)
     {
         if (!$employee) {
             return 0;
@@ -147,7 +147,7 @@ class TimeclockService
      * add time record from form
      * @param $request
      */
-    public static function addRecord($request)
+    public function addRecord($request)
     {
         $employee = Employee::find($request->employee);
         $record = new TimeRecord();
